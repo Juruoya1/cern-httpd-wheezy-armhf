@@ -1,2 +1,32 @@
-# cern-httpd-wheezy-armhf
-Cern httpd on wheezy armhf
+Package: cern-httpd
+Version: 3.0A-1
+Architecture: armhf
+Maintainer: JurionOJ <juruoya1@outlook.com>
+Description: CERN httpd 3.0A for Raspbian Wheezy
+ The original web server from CERN (1994), patched for
+ Wheezy armhf and vfat filesystem compatibility.
+ Includes fixes for sys_errlist, struct tm, timezone,
+ and FTP stub.
+Section: web
+Priority: optional
+Homepage: https://www.w3.org/Daemon/
+
+Patches for Raspbian Wheezy (armhf/vfat):
+
+1. Library/Implementation/HTTCP.c - comment out extern char *sys_errlist[]
+2. Library/Implementation/HTFTP.c - replaced with stub (FTP disabled)
+3. Daemon/Implementation/HTSUtils.c - struct tm initialization, timezone=0
+4. Daemon/Implementation/HTPasswd.c - added -lcrypt
+5. Daemon/Implementation/HTFTP.c - stub file (FTP support removed)
+
+Compile:
+  cd Daemon/linux
+  gcc -o httpd *.o ftp_stub.o ../../Library/linux/libwww.a -lcrypt -lm
+
+Run on vfat:
+  mount -t vfat -o uid=1000,gid=1000,umask=022,exec /dev/sda1 /mnt/hdd
+  sudo /usr/local/bin/cern-httpd -p 8080 /mnt/hdd/jurionoj/html
+
+This product includes computer software created and made available by CERN. 
+This acknowledgement shall be mentioned in full in any product which includes 
+the CERN computer software included herein or parts thereof.
